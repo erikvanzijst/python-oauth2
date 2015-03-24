@@ -772,13 +772,17 @@ class Server(object):
 
     def _check_timestamp(self, timestamp):
         """Verify that timestamp is recentish."""
-        timestamp = int(timestamp)
-        now = int(time.time())
-        lapsed = now - timestamp
-        if lapsed > self.timestamp_threshold:
-            raise Error('Expired timestamp: given %d and now %s has a '
-                'greater difference than threshold %d' % (timestamp, now, 
-                    self.timestamp_threshold))
+        try:
+            timestamp = int(timestamp)
+        except ValueError:
+            raise Error('Invalid timestamp value (%s)' % timestamp)
+        else:
+            now = int(time.time())
+            lapsed = now - timestamp
+            if lapsed > self.timestamp_threshold:
+                raise Error('Expired timestamp: given %d and now %s has a '
+                            'greater difference than threshold %d' %
+                            (timestamp, now, self.timestamp_threshold))
 
 
 class SignatureMethod(object):
